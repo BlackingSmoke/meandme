@@ -1,83 +1,54 @@
-// ==================================================
-// ZY_CREATEUR - GESTION DU FORMULAIRE (WHATSAPP OU EMAIL)
-// ==================================================
+document.addEventListener("DOMContentLoaded", function () {
+    // Sélection des boutons par leur texte ou leur classe/type
+    const btnWhatsapp = document.querySelector('button:nth-last-of-type(2)'); // Le bouton vert
+    const btnEmail = document.querySelector('button:nth-last-of-type(1)'); // Le bouton rouge
 
-const formulaire = document.getElementById("contactForm");
-const boutonWhatsApp = document.getElementById("submitWhatsApp");
-const boutonEmail = document.getElementById("submitEmail");
-const messageResultat = document.getElementById("formMessage");
+    if (btnWhatsapp) {
+        btnWhatsapp.addEventListener("click", envoyerWhatsApp);
+    }
 
-function afficherMessage(message, type) {
-  messageResultat.textContent = message;
-  messageResultat.className = type;
-}
-
-// Fonction utilitaire pour récupérer et valider les champs du formulaire
-function kraRécupérerDonnées() {
-  const nom = document.getElementById("nom").value.trim();
-  const entreprise = document.getElementById("entreprise").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const whatsappClient = document.getElementById("whatsapp").value.trim();
-  const service = document.getElementById("service").value;
-  const message = document.getElementById("message").value.trim();
-
-  if (!nom || !email || !service || !message) {
-    afficherMessage("❌ Veuillez remplir tous les champs obligatoires.", "error");
-    return null;
-  }
-
-  return { nom, entreprise, email, whatsappClient, service, message };
-}
-
-// 1. Action pour l'envoi via WhatsApp
-boutonWhatsApp.addEventListener("click", function (event) {
-  event.preventDefault();
-  const data = kraRécupérerDonnées();
-  if (!data) return;
-
-  const numeroWhatsApp = "243906840229";
-  const texteMessage = 
-    `*Nouveau projet - ZY_createur*\n\n` +
-    `👤 *Nom :* ${data.nom}\n` +
-    `🏢 *Entreprise/Projet :* ${data.entreprise || "Non spécifié"}\n` +
-    `📧 *Email :* ${data.email}\n` +
-    `📱 *WhatsApp client :* ${data.whatsappClient || "Non spécifié"}\n` +
-    `🎯 *Service :* ${data.service}\n\n` +
-    `💬 *Message :*\n${data.message}`;
-
-  const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texteMessage)}`;
-
-  afficherMessage("✅ Redirection vers WhatsApp...", "success");
-  setTimeout(() => {
-    window.open(urlWhatsApp, "_blank");
-    formulaire.reset();
-    messageResultat.style.display = "none";
-  }, 1000);
+    if (btnEmail) {
+        btnEmail.addEventListener("click", envoyerEmail);
+    }
 });
 
-// 2. Action pour l'envoi via E-mail
-boutonEmail.addEventListener("click", function (event) {
-  event.preventDefault();
-  const data = kraRécupérerDonnées();
-  if (!data) return;
+// Fonction pour envoyer sur WhatsApp
+function envoyerWhatsApp() {
+    // Récupération des champs du formulaire
+    const inputs = document.querySelectorAll('input, select, textarea');
+    const nom = inputs[0] ? inputs[0].value : "";
+    const telephone = inputs[1] ? inputs[1].value : "";
+    const email = inputs[2] ? inputs[2].value : "";
+    const service = inputs[3] ? inputs[3].value : "";
+    const message = inputs[4] ? inputs[4].value : "";
 
-  const destinataire = "Mbuyambasamzy@gmail.com";
-  const sujet = encodeURIComponent(`Nouveau projet : ${data.service} - ${data.nom}`);
-  const corpsMessage = encodeURIComponent(
-    `Nom : ${data.nom}\n` +
-    `Entreprise/Projet : ${data.entreprise || "Non spécifié"}\n` +
-    `Email : ${data.email}\n` +
-    `WhatsApp : ${data.whatsappClient || "Non spécifié"}\n` +
-    `Service : ${data.service}\n\n` +
-    `Message :\n${data.message}`
-  );
+    // Ton numéro WhatsApp (indicatif 243 pour la RDC + ton numéro)
+    const numeroWhatsApp = "243838078501"; 
 
-  const urlEmail = `mailto:${destinataire}?subject=${sujet}&body=${corpsMessage}`;
+    // Création du texte du message
+    const texte = `Bonjour, je m'appelle ${nom}.\nTéléphone : ${telephone}\nE-mail : ${email}\nService souhaité : ${service}\nMessage : ${message}`;
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texte)}`;
 
-  afficherMessage("✅ Ouverture de votre messagerie e-mail...", "success");
-  setTimeout(() => {
-    window.location.href = urlEmail;
-    formulaire.reset();
-    messageResultat.style.display = "none";
-  }, 1000);
-});
+    // Ouvre WhatsApp
+    window.open(url, '_blank');
+}
+
+// Fonction pour envoyer par E-mail
+function envoyerEmail() {
+    // Récupération des champs du formulaire
+    const inputs = document.querySelectorAll('input, select, textarea');
+    const nom = inputs[0] ? inputs[0].value : "";
+    const telephone = inputs[1] ? inputs[1].value : "";
+    const email = inputs[2] ? inputs[2].value : "";
+    const service = inputs[3] ? inputs[3].value : "";
+    const message = inputs[4] ? inputs[4].value : "";
+
+    const destinataire = "onlylean2.0@icloud.com";
+    const sujet = encodeURIComponent(`Nouvelle demande de service : ${service}`);
+    const corps = encodeURIComponent(`Nom : ${nom}\nTéléphone : ${telephone}\nE-mail : ${email}\nService : ${service}\n\nMessage :\n${message}`);
+
+    const url = `mailto:${destinataire}?subject=${sujet}&body=${corps}`;
+    
+    // Ouvre l'application mail
+    window.location.href = url;
+}
