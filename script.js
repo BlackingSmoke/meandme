@@ -1,54 +1,59 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Sélection des boutons par leur texte ou leur classe/type
-    const btnWhatsapp = document.querySelector('button:nth-last-of-type(2)'); // Le bouton vert
-    const btnEmail = document.querySelector('button:nth-last-of-type(1)'); // Le bouton rouge
+    const btnWhatsapp = document.querySelector('.btn-whatsapp') || document.querySelector('button:nth-last-of-type(2)') || document.querySelector('button:has(span)');
+    const btnEmail = document.querySelector('.btn-email') || document.querySelector('button:nth-last-of-type(1)');
 
     if (btnWhatsapp) {
-        btnWhatsapp.addEventListener("click", envoyerWhatsApp);
+        btnWhatsapp.addEventListener("click", function(e) {
+            e.preventDefault();
+            envoyerWhatsApp();
+        });
     }
-
     if (btnEmail) {
-        btnEmail.addEventListener("click", envoyerEmail);
+        btnEmail.addEventListener("click", function(e) {
+            e.preventDefault();
+            envoyerEmail();
+        });
     }
 });
 
-// Fonction pour envoyer sur WhatsApp
 function envoyerWhatsApp() {
-    // Récupération des champs du formulaire
-    const inputs = document.querySelectorAll('input, select, textarea');
-    const nom = inputs[0] ? inputs[0].value : "";
-    const telephone = inputs[1] ? inputs[1].value : "";
-    const email = inputs[2] ? inputs[2].value : "";
-    const service = inputs[3] ? inputs[3].value : "";
-    const message = inputs[4] ? inputs[4].value : "";
+    // Récupération sécurisée par type ou par position
+    const nomInput = document.querySelector('input[type="text"]');
+    const telInput = document.querySelector('input[type="tel"]') || document.querySelectorAll('input')[1];
+    const emailInput = document.querySelector('input[type="email"]');
+    const selectEl = document.querySelector('select');
+    const textareaEl = document.querySelector('textarea');
 
-    // Ton numéro WhatsApp (indicatif 243 pour la RDC + ton numéro)
+    const nom = nomInput ? nomInput.value : "Client";
+    const telephone = telInput ? telInput.value : "";
+    const email = emailInput ? emailInput.value : "";
+    const service = selectEl ? selectEl.value : "Non spécifié";
+    const message = textareaEl ? textareaEl.value : "";
+
     const numeroWhatsApp = "243838078501"; 
-
-    // Création du texte du message
     const texte = `Bonjour, je m'appelle ${nom}.\nTéléphone : ${telephone}\nE-mail : ${email}\nService souhaité : ${service}\nMessage : ${message}`;
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texte)}`;
 
-    // Ouvre WhatsApp
-    window.open(url, '_blank');
+    window.location.href = url; // Utiliser location.href fonctionne mieux sur iPhone/Safari
 }
 
-// Fonction pour envoyer par E-mail
 function envoyerEmail() {
-    // Récupération des champs du formulaire
-    const inputs = document.querySelectorAll('input, select, textarea');
-    const nom = inputs[0] ? inputs[0].value : "";
-    const telephone = inputs[1] ? inputs[1].value : "";
-    const email = inputs[2] ? inputs[2].value : "";
-    const service = inputs[3] ? inputs[3].value : "";
-    const message = inputs[4] ? inputs[4].value : "";
+    const nomInput = document.querySelector('input[type="text"]');
+    const telInput = document.querySelector('input[type="tel"]') || document.querySelectorAll('input')[1];
+    const emailInput = document.querySelector('input[type="email"]');
+    const selectEl = document.querySelector('select');
+    const textareaEl = document.querySelector('textarea');
+
+    const nom = nomInput ? nomInput.value : "Client";
+    const telephone = telInput ? telInput.value : "";
+    const email = emailInput ? emailInput.value : "";
+    const service = selectEl ? selectEl.value : "Non spécifié";
+    const message = textareaEl ? textareaEl.value : "";
 
     const destinataire = "onlylean2.0@icloud.com";
     const sujet = encodeURIComponent(`Nouvelle demande de service : ${service}`);
     const corps = encodeURIComponent(`Nom : ${nom}\nTéléphone : ${telephone}\nE-mail : ${email}\nService : ${service}\n\nMessage :\n${message}`);
 
     const url = `mailto:${destinataire}?subject=${sujet}&body=${corps}`;
-    
-    // Ouvre l'application mail
     window.location.href = url;
 }
