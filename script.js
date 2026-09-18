@@ -1,59 +1,108 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const btnWhatsapp = document.querySelector('.btn-whatsapp') || document.querySelector('button:nth-last-of-type(2)') || document.querySelector('button:has(span)');
-    const btnEmail = document.querySelector('.btn-email') || document.querySelector('button:nth-last-of-type(1)');
+
+    const btnWhatsapp = document.getElementById("submitWhatsApp");
+    const btnEmail = document.getElementById("submitEmail");
 
     if (btnWhatsapp) {
-        btnWhatsapp.addEventListener("click", function(e) {
-            e.preventDefault();
-            envoyerWhatsApp();
-        });
+        btnWhatsapp.addEventListener("click", envoyerWhatsApp);
     }
+
     if (btnEmail) {
-        btnEmail.addEventListener("click", function(e) {
-            e.preventDefault();
-            envoyerEmail();
-        });
+        btnEmail.addEventListener("click", envoyerEmail);
     }
+
 });
 
+
+/* ==================================================
+   ENVOYER LE FORMULAIRE SUR WHATSAPP
+   DESTINATAIRE : ZY_createur
+================================================== */
+
 function envoyerWhatsApp() {
-    // Récupération sécurisée par type ou par position
-    const nomInput = document.querySelector('input[type="text"]');
-    const telInput = document.querySelector('input[type="tel"]') || document.querySelectorAll('input')[1];
-    const emailInput = document.querySelector('input[type="email"]');
-    const selectEl = document.querySelector('select');
-    const textareaEl = document.querySelector('textarea');
 
-    const nom = nomInput ? nomInput.value : "Client";
-    const telephone = telInput ? telInput.value : "";
-    const email = emailInput ? emailInput.value : "";
-    const service = selectEl ? selectEl.value : "Non spécifié";
-    const message = textareaEl ? textareaEl.value : "";
+    const nom = document.getElementById("nom").value.trim();
+    const entreprise = document.getElementById("entreprise").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const service = document.getElementById("service").value;
+    const message = document.getElementById("message").value.trim();
 
-    const numeroWhatsApp = "243838078501"; 
-    const texte = `Bonjour, je m'appelle ${nom}.\nTéléphone : ${telephone}\nE-mail : ${email}\nService souhaité : ${service}\nMessage : ${message}`;
-    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texte)}`;
+    // Vérification des champs obligatoires
+    if (!nom || !email || !service || !message) {
+        alert("Veuillez remplir tous les champs obligatoires.");
+        return;
+    }
 
-    window.location.href = url; // Utiliser location.href fonctionne mieux sur iPhone/Safari
+    /*
+       NUMÉRO DU CLIENT
+       0906840229 devient +243 906 840 229
+
+       IMPORTANT :
+       WhatsApp utilise le format international
+       sans le +, sans espace et sans le 0 initial.
+    */
+
+    const numeroWhatsApp = "243906840229";
+
+    const texte =
+`Bonjour, je m'appelle ${nom}.
+
+Entreprise / Projet : ${entreprise || "Non renseigné"}
+E-mail : ${email}
+Mon WhatsApp : ${whatsapp || "Non renseigné"}
+
+Service souhaité : ${service}
+
+Message :
+${message}`;
+
+    const url =
+        `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texte)}`;
+
+    window.location.href = url;
 }
 
+
+/* ==================================================
+   ENVOYER LE FORMULAIRE PAR E-MAIL
+================================================== */
+
 function envoyerEmail() {
-    const nomInput = document.querySelector('input[type="text"]');
-    const telInput = document.querySelector('input[type="tel"]') || document.querySelectorAll('input')[1];
-    const emailInput = document.querySelector('input[type="email"]');
-    const selectEl = document.querySelector('select');
-    const textareaEl = document.querySelector('textarea');
 
-    const nom = nomInput ? nomInput.value : "Client";
-    const telephone = telInput ? telInput.value : "";
-    const email = emailInput ? emailInput.value : "";
-    const service = selectEl ? selectEl.value : "Non spécifié";
-    const message = textareaEl ? textareaEl.value : "";
+    const nom = document.getElementById("nom").value.trim();
+    const entreprise = document.getElementById("entreprise").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const service = document.getElementById("service").value;
+    const message = document.getElementById("message").value.trim();
 
-    const destinataire = "onlylean2.0@icloud.com";
-    const sujet = encodeURIComponent(`Nouvelle demande de service : ${service}`);
-    const corps = encodeURIComponent(`Nom : ${nom}\nTéléphone : ${telephone}\nE-mail : ${email}\nService : ${service}\n\nMessage :\n${message}`);
+    // Vérification des champs obligatoires
+    if (!nom || !email || !service || !message) {
+        alert("Veuillez remplir tous les champs obligatoires.");
+        return;
+    }
 
-    const url = `mailto:${destinataire}?subject=${sujet}&body=${corps}`;
+    // E-mail du client
+    const destinataire = "Mbuyambasamzy@gmail.com";
+
+    const sujet = encodeURIComponent(
+        `Nouvelle demande de service : ${service}`
+    );
+
+    const corps = encodeURIComponent(
+`Nom : ${nom}
+Entreprise / Projet : ${entreprise || "Non renseigné"}
+E-mail : ${email}
+WhatsApp : ${whatsapp || "Non renseigné"}
+Service : ${service}
+
+Message :
+${message}`
+    );
+
+    const url =
+        `mailto:${destinataire}?subject=${sujet}&body=${corps}`;
+
     window.location.href = url;
 }
